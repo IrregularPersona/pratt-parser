@@ -154,7 +154,12 @@ impl Parser {
                     .iter()
                     .map(|n| n.to_float())
                     .fold(f64::INFINITY, |a, b| a.min(b));
-                Number::Float(min_val)
+
+                if min_val.fract() == 0.0 {
+                    Number::Int(min_val as i64)
+                } else {
+                    Number::Float(min_val)
+                }
             }
             "max" => {
                 if args.is_empty() {
@@ -164,7 +169,12 @@ impl Parser {
                     .iter()
                     .map(|n| n.to_float())
                     .fold(f64::NEG_INFINITY, |a, b| a.max(b));
-                Number::Float(max_val)
+
+                if max_val.fract() == 0.0 {
+                    Number::Int(max_val as i64)
+                } else {
+                    Number::Float(max_val)
+                }
             }
 
             "atan2" => {
