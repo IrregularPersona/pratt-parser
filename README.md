@@ -12,6 +12,7 @@ The language spec is currently:
 ## Base Types
 
 | num | Type | Underlying Type |
+| :--- | :--- | :--- |
 | 1 | char | char |
 | 2 | uchar | unsigned char |
 | 3 | short | int8_t |
