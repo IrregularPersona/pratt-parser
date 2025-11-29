@@ -5,7 +5,7 @@ Initially this was just my own implementation of a Pratt Parser that parses arit
 # Switching goals
 
 Now the Pratt Parser is now frankenstein-ed into a custom language parser.
-The plan is to make this into a full on function compiler, that at least can run some complicated things.
+The plan is to make this into a full on functional compiler, that at least can run some complicated things.
 
 The language spec is currently:
 
@@ -144,7 +144,9 @@ some_tuple: (int, string) // without assignment
 ```
 
 **Structs**
+
 _Note: This part is still under consideration, and is not yet thought out thoroughly_
+
 Structs have all their members access modifiers public, and they can hold functions inside of them, like this:
 ```go
 struct Person:
@@ -162,7 +164,9 @@ struct Person:
 
 
 **Classes**
+
 _Note: This part is still under consideration, and is not yet thought out thoroughly_
+
 ```py
 class Dog:
   public:
@@ -199,7 +203,9 @@ fnc divide_values(x: f32, y: f64) -> f32?:
 Do note that functions returning optional types must include at least one branch that returns `none` if a value might be absent.
 
 Values can later be checked its nullable-ness by:
+
 _Note: This part is still under consideration, and is not yet thought out thoroughly_
+
 ```zig
 fnc main():
   result: f32? = divide_values(10.0, 2.0)
