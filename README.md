@@ -78,6 +78,7 @@ fnc example():
 ## Function Syntax
 
 **Basic Syntax**
+
 For simple functions, the syntax should look like this:
 
 ```go
@@ -99,6 +100,7 @@ fnc greet_explicit(name: string) -> void:  // explicit void (equivalent)
 ```
 
 **Return Type Rules**
+
 - No return type annotation = `void` (function returns nothing)
 - Has return type annotation = must use `ret` keyword with appropriate value
 - Can write `-> void` explicitly if desired (equivalent to omitting it)
@@ -107,6 +109,7 @@ fnc greet_explicit(name: string) -> void:  // explicit void (equivalent)
 ## Variable
 
 **Inferred and Explicitly Typed**
+
 Variables can both be inferred and explicitly written:
 ```go
 x := 420
@@ -115,6 +118,7 @@ z: i64 = 67
 ```
 
 **Type Literals**
+
 You can set type literals to inferred values:
 ```go
 pi := 3.14152965f32
@@ -122,6 +126,7 @@ e := 2.71828f64
 ```
 
 **Variable States**
+
 Following the a lot of how Rust is typed, every variable is immutable (const) by default. This means that in order for a variable to be mutable, it has to come with the `mut` keyword, like this:
 
 ```go
@@ -132,11 +137,13 @@ mut M := 40 // Inferred
 ## String Operations
 
 **Concatenation**
+
 ```go
 greeting := "Hello" + " " + "World"
 ```
 
 **Interpolation**
+
 Strings support interpolation using `${}` syntax:
 ```go
 name := "Alice"
@@ -154,6 +161,7 @@ first_char := greeting[0]  // 'H'
 ```
 
 **Mutability**
+
 Strings are immutable by default. Modifying a string requires creating a new string.
 
 ## Control Flow
@@ -193,6 +201,7 @@ foreach i; 0..10:
 ```
 
 **Loops**
+
 Loops are written with the `foreach` keyword. The iterator can be implicitly casted into an int if not assigned to a value, or assigned within the foreach line, like this:
 ```d
 foreach i; 0..10: // this is implicitly casted to an int
@@ -245,6 +254,7 @@ foreach i; 0..5:
 ## Compound Types
 
 **Arrays**
+
 You have fixed and dynamically-sized arrays, largely inspired by Dlang:
 ```rs
 fixed_size: [int; 10] // Fixed size: Type then size
@@ -318,6 +328,7 @@ class Dog:
 ```
 
 **Optional / Nullable Types**
+
 These types allow a variable or a function to either hold a value of a specified type or represent the absence of a value with `none`. This is similar to Rust's `Option` type functionality, but simplified, as values can be returned directly from functions without needing to wrap the value in Some.
 
 ```zig
