@@ -1,3 +1,5 @@
+use crate::core::lexer::Token;
+
 #[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Type {
@@ -40,13 +42,12 @@ pub enum Expr {
     Literal(LiteralValue),
     Variable(String),
     Binary {
-        op: crate::core::lexer::Token, // Use the Token from lexer
+        op: Token,
         left: Box<Expr>,
         right: Box<Expr>,
     },
     Unary {
-        // ADD THIS VARIANT - it was missing!
-        op: crate::core::lexer::Token,
+        op: Token,
         expr: Box<Expr>,
     },
     Call {
@@ -58,6 +59,7 @@ pub enum Expr {
         start: Box<Expr>,
         end: Box<Expr>,
         inclusive: bool,
+        //op: Option<Token> will need to include op for Gt or Lt
     },
 }
 
@@ -90,6 +92,13 @@ pub enum Stmt {
         cond: Expr,
         then_branch: Vec<Stmt>,
         else_branch: Option<Vec<Stmt>>,
+    },
+    Foreach {
+        variable: String,
+        var_ty: Option<Type>,
+        range: Expr,
+        step: Option<Expr>, // 'by' clause
+        body: Vec<Stmt>,
     },
     Return(Option<Expr>), // explicit and implicit returns
     Expression(Expr),

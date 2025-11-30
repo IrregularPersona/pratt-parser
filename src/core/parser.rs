@@ -185,7 +185,6 @@ impl Parser {
         let condition = self.expression(0);
         self.consume(Token::Colon);
 
-        // handle newline before if block starts?
         if self.current() == &Token::Newline {
             self.advance();
         }
@@ -216,7 +215,6 @@ impl Parser {
         let mut stmts = Vec::new();
 
         while self.current() != &Token::Dedent && self.current() != &Token::EOF {
-            // Handle empty lines within the block
             if self.current() == &Token::Newline {
                 self.advance();
                 continue;
