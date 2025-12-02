@@ -5,6 +5,8 @@ pub enum Token {
     NumInt(i64),
     NumFloat(f64),
     Ident(String),
+    StrLit(String),
+    BoolLit(bool),
 
     // Operators
     Plus,
@@ -15,10 +17,16 @@ pub enum Token {
     Modulo,
     LParen,
     RParen,
+    LBracket,
+    RBracket,
+    LBrace,
+    RBrace,
     Comma,
     Colon,
     Semicolon,
     Question,
+    Dot,
+    DoubleColon,
 
     // Comparison Ops
     EqEq,  // ==
@@ -28,7 +36,7 @@ pub enum Token {
     LtEq,  // <=
     GtEq,  // >=
 
-    // Multi-char
+    // Assign
     ColonAssign, // :=
     Arrow,       // ->
     Assign,      // =
@@ -40,6 +48,19 @@ pub enum Token {
     KwIf,
     KwElse,
     KwNone,
+    KwAnd,
+    KwOr,
+    KwNot,
+    KwForeach,
+    KwBy,
+    KwAs,
+    KwStruct,
+    KwTrue,
+    KwFalse,
+    KwContinue,
+
+    DotDot,   // ..
+    DotDotEq, // ..=
 
     Indent,
     Dedent,
@@ -101,6 +122,15 @@ pub fn lex(input: &str) -> Result<Vec<Token>, String> {
                         "if" => Token::KwIf,
                         "else" => Token::KwElse,
                         "none" => Token::KwNone,
+                        "and" => Token::KwAnd,
+                        "or" => Token::KwOr,
+                        "not" => Token::KwNot,
+                        "foreach" => Token::KwForeach,
+                        "by" => Token::KwBy,
+                        "as" => Token::KwAs,
+                        "struct" => Token::KwStruct,
+                        "true" => Token::BoolLit(true),
+                        "false" => Token::BoolLit(false),
                         _ => Token::Ident(ident),
                     };
                     tokens.push(token);
@@ -136,13 +166,62 @@ pub fn lex(input: &str) -> Result<Vec<Token>, String> {
                         tokens.push(Token::NumInt(num_str.parse().unwrap()));
                     }
                 }
+                '"' => {
+                    chars.next();
+                    let mut string = String::new();
+                    while let Some(&c) = chars.peek() {
+                        if c == '"' {
+                            chars.next();
+                            break;
+                        }
+
+                        string.push(c);
+                        chars.next();
+                    }
+
+                    tokens.push(Token::StrLit(string));
+                }
                 ':' => {
                     chars.next();
-                    if let Some('=') = chars.peek() {
-                        chars.next();
-                        tokens.push(Token::ColonAssign); // :=
+                    if let Some(&next) = chars.peek() {
+                        match next {
+                            '=' => {
+                                chars.next();
+                                tokens.push(Token::ColonAssign); // :=
+                            }
+                            ':' => {
+                                chars.next();
+                                tokens.push(Token::DoubleColon); // ::
+                            }
+                            _ => {
+                                chars.next();
+                                tokens.push(Token::Colon);
+                            }
+                        }
                     } else {
                         tokens.push(Token::Colon);
+                    }
+                }
+                '.' => {
+                    chars.next();
+                    if let Some(&next) = chars.peek() {
+                        if next == '.' {
+                            chars.next();
+                            if let Some(&next2) = chars.peek() {
+                                if next2 == '=' {
+                                    chars.next();
+                                    tokens.push(Token::DotDotEq);
+                                } else {
+                                    tokens.push(Token::DotDot);
+                                }
+                            } else {
+                                tokens.push(Token::DotDot);
+                            }
+                        } else {
+                            tokens.push(Token::Dot);
+                        }
+                    } else {
+                        tokens.push(Token::Dot);
                     }
                 }
                 '-' => {
@@ -203,8 +282,16 @@ pub fn lex(input: &str) -> Result<Vec<Token>, String> {
                     chars.next();
                 }
                 '/' => {
-                    tokens.push(Token::Slash);
                     chars.next();
+                    if let Some(&next) = chars.peek() {
+                        if next == '/' {
+                            break;
+                        } else {
+                            tokens.push(Token::Slash);
+                        }
+                    } else {
+                        tokens.push(Token::Slash);
+                    }
                 }
                 '^' => {
                     tokens.push(Token::Power);
@@ -212,6 +299,22 @@ pub fn lex(input: &str) -> Result<Vec<Token>, String> {
                 }
                 '%' => {
                     tokens.push(Token::Modulo);
+                    chars.next();
+                }
+                '[' => {
+                    tokens.push(Token::LBracket);
+                    chars.next();
+                }
+                ']' => {
+                    tokens.push(Token::RBracket);
+                    chars.next();
+                }
+                '{' => {
+                    tokens.push(Token::LBrace);
+                    chars.next();
+                }
+                '}' => {
+                    tokens.push(Token::RBrace);
                     chars.next();
                 }
                 '(' => {
@@ -241,10 +344,6 @@ pub fn lex(input: &str) -> Result<Vec<Token>, String> {
             }
         }
         tokens.push(Token::Newline);
-    }
-
-    while tokens.last() == Some(&Token::Newline) {
-        tokens.pop();
     }
 
     while indent_stack.len() > 1 {

@@ -41,6 +41,25 @@ pub enum Type {
 pub enum Expr {
     Literal(LiteralValue),
     Variable(String),
+    Array {
+        elements: Vec<Expr>,
+    },
+    Call {
+        func: Box<Expr>,
+        args: Vec<Expr>,
+    },
+    StructInit {
+        name: String,
+        fields: Vec<(String, Expr)>,
+    },
+    Index {
+        callee: Box<Expr>,
+        index: Box<Expr>,
+    },
+    Get {
+        object: Box<Expr>,
+        name: Token,
+    },
     Binary {
         op: Token,
         left: Box<Expr>,
@@ -50,16 +69,14 @@ pub enum Expr {
         op: Token,
         expr: Box<Expr>,
     },
-    Call {
-        func: String,
-        args: Vec<Expr>,
-    },
     Range {
-        // for 0 .. 1 syntax
         start: Box<Expr>,
         end: Box<Expr>,
         inclusive: bool,
-        //op: Option<Token> will need to include op for Gt or Lt
+    },
+    Cast {
+        expr: Box<Expr>,
+        target_type: Type,
     },
 }
 
@@ -69,6 +86,7 @@ pub enum LiteralValue {
     Int(i64),
     Float(f64),
     Str(String),
+    Bool(bool),
     None, // None keyword
 }
 
@@ -88,11 +106,13 @@ pub enum Stmt {
         ret_type: Type,
         body: Vec<Stmt>,
     },
+
     If {
         cond: Expr,
         then_branch: Vec<Stmt>,
         else_branch: Option<Vec<Stmt>>,
     },
+
     Foreach {
         variable: String,
         var_ty: Option<Type>,
@@ -100,6 +120,18 @@ pub enum Stmt {
         step: Option<Expr>, // 'by' clause
         body: Vec<Stmt>,
     },
+
+    Struct {
+        name: String,
+        fields: Vec<(String, Type)>,
+        methods: Vec<Stmt>,
+    },
+
+    Assign {
+        target: Expr,
+        value: Expr,
+    },
+
     Return(Option<Expr>), // explicit and implicit returns
     Expression(Expr),
 }
